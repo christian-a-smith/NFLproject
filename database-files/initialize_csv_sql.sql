@@ -18,18 +18,8 @@ Game VARCHAR,
 Moneyline VARCHAR);
 
 Create table seasonstats (
-week int,
-day VARCHAR,
-date VARCHAR,
-time VARCHAR,
 winner_or_tie VARCHAR,
 home_or_away VARCHAR,
 lose_or_tie VARCHAR,
-boxscore VARCHAR,
 PtsW int,
-PtsL int,
-YdsW int,
-TOW int,
-YdsL int,
-TOL int
-);
+PtsL int);
