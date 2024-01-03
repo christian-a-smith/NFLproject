@@ -112,3 +112,64 @@ SET lose_or_tie =
         WHEN lose_or_tie = 'Tennessee Titans' THEN 'Titans'
         WHEN lose_or_tie = 'Washington Commanders' THEN 'Commanders'
     END;
+ALTER TABLE seasonstats
+ADD COLUMN game_id serial PRIMARY KEY;
+select winner_or_tie, ptsw, game_id
+into hometeamscoreswin
+from seasonstats
+where home_or_away is null;
+alter table hometeamscoreswin
+rename column winner_or_tie to home_team;
+alter table hometeamscoreswin
+rename column ptsw to points_home;
+select lose_or_tie, ptsL, game_id
+into hometeamscoreslose
+from seasonstats
+where home_or_away is not null;
+alter table hometeamscoreslose
+rename column lose_or_tie to home_team;
+alter table hometeamscoreslose
+rename column ptsl to points_home;
+select winner_or_tie, ptsW, game_id
+into awayteamscoreswin
+from seasonstats
+where home_or_away is not null;
+alter table awayteamscoreswin
+rename column winner_or_tie to away_team;
+alter table awayteamscoreswin
+rename column ptsw to points_away;
+select lose_or_tie, ptsL, game_id
+into awayteamscoreslose
+from seasonstats
+where home_or_away is null;
+alter table awayteamscoreslose
+rename column lose_or_tie to away_team;
+alter table awayteamscoreslose
+rename column ptsl to points_away;
+drop table cleaned_seasonstats;
+Create table cleaned_seasonstats (
+home_team VARCHAR,
+away_team VARCHAR,
+home_points VARCHAR,
+away_points int,
+game_id serial PRIMARY KEY);
+create table everythinghome as
+select hw.home_team, hw.points_home, hw.game_id as ID from hometeamscoreswin hw
+UNION ALL
+select hl.home_team, hl.points_home, hl.game_id as ID from hometeamscoreslose hl;
+create table everythingaway as
+select aw.away_team, aw.points_away, aw.game_id as ID from awayteamscoreswin aw
+UNION ALL
+select al.away_team, al.points_away, al.game_id as ID from awayteamscoreslose al;
+CREATE TABLE cleaned_seasonstats AS
+SELECT
+    eh.home_team,
+    ea.away_team,
+    eh.points_home,
+    ea.points_away,
+    eh.id
+FROM
+    everythinghome eh
+FULL OUTER JOIN
+    everythingaway ea ON eh.id = ea.id;
+select * from cleaned_seasonstats;
