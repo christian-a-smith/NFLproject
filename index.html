@@ -2,8 +2,7 @@
 <html>
 <head>
     <title>NFL Data Visualization</title>
-    <!-- Add any required CSS here -->
-    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <h1>NFL Data Visualization</h1>
@@ -14,7 +13,10 @@
             <option value="spreads">Spreads</option>
         </select>
     </div>
-    <div id="chart"></div>
+    <div id="chart">
+        <canvas id="oversChart"></canvas>
+        <canvas id="undersChart" style="display:none;"></canvas>
+    </div>
 
     <script src="static/js/app.js"></script>
 </body>
