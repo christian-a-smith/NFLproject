@@ -19,8 +19,14 @@ function createChart(data, canvasId, label, chartVariable) {
         window[chartVariable].destroy();
     }
 
-    // Sorting data in descending order based on the count
-    let dataProperty = label === 'Overs' ? "Overs hit" : "Unders hit";
+    let dataProperty = '';
+    if (label === 'Overs') dataProperty = "Overs hit";
+    else if (label === 'Unders') dataProperty = "Unders hit";
+    else if (label === 'Covers') dataProperty = "Spreads covered";
+    else if (label === 'Non-Covers') dataProperty = "Spreads not covered";
+    else if (label === 'Moneyline Wins') dataProperty = "Moneyline wins";
+    else if (label === 'Moneyline Losses') dataProperty = "Moneyline losses";
+
     let sortedData = sortDataDescending(data, dataProperty);
 
     window[chartVariable] = new Chart(ctx, {
@@ -46,20 +52,39 @@ function createChart(data, canvasId, label, chartVariable) {
 }
 
 document.getElementById('data-dropdown').addEventListener('change', async function() {
+    // Hide all canvases initially
+    document.getElementById('oversChart').style.display = 'none';
+    document.getElementById('undersChart').style.display = 'none';
+    document.getElementById('coversChart').style.display = 'none';
+    document.getElementById('nonCoversChart').style.display = 'none';
+    document.getElementById('moneylineWinsChart').style.display = 'none';
+    document.getElementById('moneylineLossesChart').style.display = 'none';
+
     const selectedOption = this.value;
+
     if (selectedOption === 'over_under') {
-        // Handle Overs Chart
         const oversData = await fetchData('json-files/modified_overs_df.json');
         document.getElementById('oversChart').style.display = 'block';
         createChart(oversData, 'oversChart', 'Overs', 'oversChartInstance');
 
-        // Handle Unders Chart
         const undersData = await fetchData('json-files/modified_unders_df.json');
         document.getElementById('undersChart').style.display = 'block';
         createChart(undersData, 'undersChart', 'Unders', 'undersChartInstance');
-    } else {
-        // Hide the canvases if another option is selected
-        document.getElementById('oversChart').style.display = 'none';
-        document.getElementById('undersChart').style.display = 'none';
+    } else if (selectedOption === 'spreads') {
+        const coversData = await fetchData('json-files/modified_covers.json');
+        document.getElementById('coversChart').style.display = 'block';
+        createChart(coversData, 'coversChart', 'Covers', 'coversChartInstance');
+
+        const nonCoversData = await fetchData('json-files/modified_non_covers.json');
+        document.getElementById('nonCoversChart').style.display = 'block';
+        createChart(nonCoversData, 'nonCoversChart', 'Non-Covers', 'nonCoversChartInstance');
+    } else if (selectedOption === 'moneylines') {
+        const moneylineWinsData = await fetchData('json-files/modified_moneyline_wins.json');
+        document.getElementById('moneylineWinsChart').style.display = 'block';
+        createChart(moneylineWinsData, 'moneylineWinsChart', 'Moneyline Wins', 'moneylineWinsChartInstance');
+
+        const moneylineLossesData = await fetchData('json-files/modified_moneyline_losses.json');
+        document.getElementById('moneylineLossesChart').style.display = 'block';
+        createChart(moneylineLossesData, 'moneylineLossesChart', 'Moneyline Losses', 'moneylineLossesChartInstance');
     }
 });
