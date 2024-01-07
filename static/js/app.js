@@ -20,12 +20,14 @@ function createChart(data, canvasId, label, chartVariable) {
     }
 
     let dataProperty = '';
-    if (label === 'Overs') dataProperty = "Overs hit";
-    else if (label === 'Unders') dataProperty = "Unders hit";
-    else if (label === 'Covers') dataProperty = "Spreads covered";
-    else if (label === 'Non-Covers') dataProperty = "Spreads not covered";
-    else if (label === 'Moneyline Wins') dataProperty = "Moneyline wins";
-    else if (label === 'Moneyline Losses') dataProperty = "Moneyline losses";
+    let chartColor = '';
+    if (label === 'Overs' || label === 'Moneyline Wins' || label === 'Covers') {
+        dataProperty = label === 'Overs' ? "Overs hit" : (label === 'Moneyline Wins' ? "Moneyline wins" : "Spreads covered");
+        chartColor = 'rgba(0, 128, 0, 0.2)'; // Greenish hue
+    } else {
+        dataProperty = label === 'Unders' ? "Unders hit" : (label === 'Moneyline Losses' ? "Moneyline losses" : "Spreads not covered");
+        chartColor = 'rgba(255, 0, 0, 0.2)'; // Reddish hue
+    }
 
     let sortedData = sortDataDescending(data, dataProperty);
 
@@ -36,8 +38,8 @@ function createChart(data, canvasId, label, chartVariable) {
             datasets: [{
                 label: label,
                 data: sortedData.map(item => item[dataProperty]),
-                backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                borderColor: 'rgba(54, 162, 235, 1)',
+                backgroundColor: chartColor,
+                borderColor: chartColor.replace('0.2', '1'), // More solid color for border
                 borderWidth: 1
             }]
         },
